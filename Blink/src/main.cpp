@@ -2,12 +2,15 @@
 
 // Pin 13 has an LED connected on most Arduino boards.
 // give it a name:
-int led = 13;
+#define LED 13
+
+void ledSetup() {
+  DDRB = DDRB | (1 << 5);
+}
 
 // the setup routine runs once when you press reset:
 void setup() {                
-  // initialize the digital pin as an output.
-  pinMode(led, OUTPUT);    
+  ledSetup();    
 }
 
 void ledOn() {
