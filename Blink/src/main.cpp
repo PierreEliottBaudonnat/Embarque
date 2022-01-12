@@ -21,9 +21,11 @@ void ledOff() {
   PORTB = PORTB & ~ (1 << 5);
 }
 
+void toggle(){
+  PINB |= (1<<5);
+}
+
 void loop() {
-  ledOn();
-  delay(1000);
-  ledOff();
+  toggle();
   delay(1000);
 }
