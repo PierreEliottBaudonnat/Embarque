@@ -1,43 +1,33 @@
 #include <Arduino.h>
 
-// Pin 13 has an LED connected on most Arduino boards.
-// give it a name:
-#define LED 13
+int trigger_pin = 2;
+int echo_pin = 3;
+int buzzer_pin = 10; 
+int led =  13;
+int time;
+int distance; 
 
-void ledSetup() {
-  DDRB = DDRB | (1 << 5);
+void setup(){
+  pinMode (trigger_pin, OUTPUT); 
+  pinMode (echo_pin, INPUT);
+  pinMode (buzzer_pin, OUTPUT);
+  pinMode(led, OUTPUT);
 }
 
-// the setup routine runs once when you press reset:
 
-void ledOn() {
-  PORTB = PORTB | (1 << 5);
-}
+void loop(){
+  digitalWrite (trigger_pin, HIGH);
+  delayMicroseconds (10);
+  digitalWrite (trigger_pin, LOW);
+  time = pulseIn (echo_pin, HIGH);
+  distance = (time * 0.034);
 
-void ledOff() {
-  PORTB = PORTB & ~ (1 << 5);
-}
-
-void toggle(){
-  PINB |= (1<<5);
-}
-
-void timerSetup(){
-  TCCR1A = 0;
-  TCCR1B = (1 << WGM12) | (1 << CS12) | (1 << CS10);
-  OCR1A = 15625;
-  TCNT1 = 0;
-  TIMSK1 = (1 << OCIE1A);
-}
-
-ISR(TIMER1_COMPA_vect){
-  toggle();
-}
-
-void setup() {                
-  ledSetup(); 
-  timerSetup();   
-}
-
-void loop() {
+  if (distance <= 20) {       
+    digitalWrite(led, HIGH);
+    delay (500);
+  }
+  else {     
+    digitalWrite(led, LOW);
+    delay (500);        
+  } 
 }
