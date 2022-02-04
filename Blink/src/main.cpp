@@ -4,9 +4,6 @@
 const byte TRIGGER_PIN = 2; // Broche TRIGGER
 const byte ECHO_PIN = 3;    // Broche ECHO
 
-int MSL = 9; // Micro-switch de gauche
-int MSR = 8; // Micro-switch de droite
-
 // Bits pour le moteur A
 int MA0 = 10;
 int MA1 = 11;
@@ -27,9 +24,6 @@ void setup() {
   pinMode(TRIGGER_PIN, OUTPUT);
   digitalWrite(TRIGGER_PIN, LOW); // La broche TRIGGER doit etre LOW au repos
   pinMode(ECHO_PIN, INPUT);
-  // INPUTS
-  pinMode(MSL, INPUT);
-  pinMode(MSR, INPUT);
   
   // OUTPUTS
   pinMode(MA0, OUTPUT);
@@ -85,7 +79,8 @@ void turnOnTheLeft(){
   digitalWrite(MB0, HIGH);
   digitalWrite(MB1, LOW);
   
-  delay(750);
+  // On tourne sur la gauche pendant une seconde
+  delay(1000);
 }
 
 void turnOnTheRight(){
@@ -97,21 +92,22 @@ void turnOnTheRight(){
   digitalWrite(MB0, LOW);
   digitalWrite(MB1, HIGH);
   
-  delay(750);
+  // On tourne sur la droite pendant une seconde
+  delay(1000);
 }
  
 void changeDirection(){
-  stop();
-  goBackward();
-  randomNumber = random(2.0);
-  Serial.print(randomNumber);
+  stop();   // En premier lieu, on se stoppe à la vue d'un obstacle
+  goBackward();   // Puis on fait une marche arrière
+  randomNumber = random(2.0);   // On choisit un nombre au hasard entre 0 et 1 (que l'on affiche dans la console par la suite)
+  Serial.println(randomNumber);
   if(randomNumber < 1.0){
-    turnOnTheLeft();
+    turnOnTheLeft();    // Si le nombre choisit est 0, on va sur la gauche
   }
   else{
-    turnOnTheRight();
+    turnOnTheRight();   // Sinon, on va sur la droite
   }
-  stop();
+  stop();   // Enfin, on se stoppe une dernière fois, prêt à repartir 
 }
 
 void loop() {
@@ -121,20 +117,19 @@ void loop() {
   delayMicroseconds(10);
   digitalWrite(TRIGGER_PIN, LOW);
   
-  /* Mesure du temps entre l'envoi de l'impulsion et sa réception */
-  long measure = pulseIn(ECHO_PIN, HIGH);
+  long measure = pulseIn(ECHO_PIN, HIGH);   // Mesure du temps entre l'envoi de l'impulsion et sa réception
  
-  /* Calcule la distance grâce au temps mesuré */
-  float distance = measure / 2.0 * SOUND_SPEED;
+  float distance = measure / 2.0 * SOUND_SPEED;   // Calcul de la distance grâce au temps mesuré
  
-  if(distance/1000 < 0.10){
-    Serial.print("Vous êtes à moins de 10cm d'un obstacle, il faut s'arrêter"); // si un obstacle est à moins de 10cm, on change de direction
-    changeDirection();
+  if(distance/1000 < 0.15){
+    Serial.println("Vous êtes à moins de 15cm d'un obstacle, il faut s'arrêter"); 
+    changeDirection();    // Si un obstacle est à moins de 10cm, on change de direction
   }
   else{
-    Serial.print("Vous pouvez continuer en ligne droite !"); // sinon, on va tout droit
-    goForward();
+    Serial.println("Vous pouvez continuer en ligne droite !"); 
+    goForward();    // Sinon, on va tout droit
   }
 
+  // Délai d'attente pour ne pas afficher trop de résultats à la seconde
   delay(500);
 }
